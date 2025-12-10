@@ -13,7 +13,7 @@ This architecture resolves these issues by establishing a **Cryptographic Proof 
 
 The following diagram illustrates the fundamental interactions between the backend system and the auditable ledger layer.
 
-![Use Case Diagram for Blockchain Service System](\assets\basic-use-case-0001.jpg)
+![Use Case Diagram for Blockchain Service System](/assets/basic-use-case-0001.jpg)
 
 ## 🛠️ 2. The Blockchain Service System Summary
 
