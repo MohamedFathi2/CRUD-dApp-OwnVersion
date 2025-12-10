@@ -62,7 +62,7 @@ The pattern strictly separates the execution flow into two distinct responsibili
 3.  The client internally uses the **`SecretSigningKey`** to sign the transaction and broadcasts it to the ledger.
 4.  The Smart Contract (`TransactionRegistry`) checks for uniqueness based on the operation data's hash. If unique, it registers the hash and the sender's Public Address.
 5.  The client returns a boolean (`true`/`false`) status to the calling module.
-6.  الخدمة تستمر في كتابة التغييرات على قاعدة البيانات المحلية **فقط إذا** تم التحقق بنجاح.
+6.  Service operate CRUD succesfully if it is approved by blockchain system
 
 **B. The Query Flow (Read):**
 
