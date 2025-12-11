@@ -4653,12 +4653,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x5e3E473dDBDd8DEB205d74B7EB1eEA4FA08995bB",
-      "transactionHash": "0x1b31bddfb283c6db1d9d195a4d4b684b09f09725c425dd9acacaeeeb04585417"
+      "address": "0x63626193b6f4986CCbd66650c45468601eff6623",
+      "transactionHash": "0xa053176af79176f11da31de36c12f1a5eabc99912eeea9598941dd0443ac53fe"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2025-12-11T01:42:00.932Z",
+  "updatedAt": "2025-12-11T02:03:54.793Z",
   "networkType": "ethereum",
   "devdoc": {
     "details": "Implements ITransactionRegistry to provide operation uniqueness validation and cryptographic proof of who performed each operation.",
