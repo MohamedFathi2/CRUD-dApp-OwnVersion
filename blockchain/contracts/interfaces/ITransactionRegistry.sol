@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.21;
 
 /**
  * @title ITransactionRegistry
@@ -15,9 +15,12 @@ interface ITransactionRegistry {
      */
     event TransactionExecuted(
         address indexed signer, 
-        bytes32 transactionHash, 
+        bytes32 txnHash, 
         uint256 timestamp
     );
+    
+    // Event to track validation results
+    event ValidationResult(bool success);
 
     /**
      * @notice Validates that an operation signature is unique and locks it to the sender.

@@ -16,14 +16,15 @@ contract("TransactionRegistry", (accounts) => {
       const recordId = "user_123";
       const timestamp = Math.floor(Date.now() / 1000);
 
-      const result = await registryInstance.validateTransaction(
+      const tx = await registryInstance.validateTransaction(
         operation,
         recordId,
         timestamp,
         { from: user1 }
       );
 
-      assert.isTrue(result, "First transaction should be accepted");
+      const validationEvent = tx.logs.find(log => log.event === 'ValidationResult');
+      assert.isTrue(validationEvent.args.success, "First transaction should be accepted");
     });
 
     it("should reject duplicate transactions and return false", async () => {
@@ -32,22 +33,24 @@ contract("TransactionRegistry", (accounts) => {
       const timestamp = Math.floor(Date.now() / 1000);
 
       // First call should succeed
-      const firstResult = await registryInstance.validateTransaction(
+      const firstTx = await registryInstance.validateTransaction(
         operation,
         recordId,
         timestamp,
         { from: user1 }
       );
-      assert.isTrue(firstResult, "First transaction should succeed");
+      const firstValidationEvent = firstTx.logs.find(log => log.event === 'ValidationResult');
+      assert.isTrue(firstValidationEvent.args.success, "First transaction should succeed");
 
       // Second call with same parameters should fail
-      const secondResult = await registryInstance.validateTransaction(
+      const secondTx = await registryInstance.validateTransaction(
         operation,
         recordId,
         timestamp,
         { from: user1 }
       );
-      assert.isFalse(secondResult, "Duplicate transaction should be rejected");
+      const secondValidationEvent = secondTx.logs.find(log => log.event === 'ValidationResult');
+      assert.isFalse(secondValidationEvent.args.success, "Duplicate transaction should be rejected");
     });
 
     it("should emit TransactionExecuted event on success", async () => {
@@ -62,11 +65,11 @@ contract("TransactionRegistry", (accounts) => {
         { from: user1 }
       );
 
-      assert.equal(tx.logs.length, 1, "Should have one event");
-      assert.equal(tx.logs[0].event, "TransactionExecuted", "Event should be TransactionExecuted");
-      assert.equal(tx.logs[0].args.signer, user1, "Signer should be user1");
+      const txnEvent = tx.logs.find(log => log.event === 'TransactionExecuted');
+      assert.isDefined(txnEvent, "Should have TransactionExecuted event");
+      assert.equal(txnEvent.args.signer, user1, "Signer should be user1");
       assert.equal(
-        tx.logs[0].args.timestamp.toNumber(),
+        txnEvent.args.timestamp.toNumber(),
         timestamp,
         "Timestamp should match"
       );
@@ -76,22 +79,24 @@ contract("TransactionRegistry", (accounts) => {
       const operation = "Create";
       const timestamp = Math.floor(Date.now() / 1000);
 
-      const result1 = await registryInstance.validateTransaction(
+      const result1Tx = await registryInstance.validateTransaction(
         operation,
         "record_1",
         timestamp,
         { from: user1 }
       );
+      const result1Event = result1Tx.logs.find(log => log.event === 'ValidationResult');
 
-      const result2 = await registryInstance.validateTransaction(
+      const result2Tx = await registryInstance.validateTransaction(
         operation,
         "record_2",
         timestamp,
         { from: user2 }
       );
+      const result2Event = result2Tx.logs.find(log => log.event === 'ValidationResult');
 
-      assert.isTrue(result1, "User1's operation should succeed");
-      assert.isTrue(result2, "User2's operation should succeed");
+      assert.isTrue(result1Event.args.success, "User1's operation should succeed");
+      assert.isTrue(result2Event.args.success, "User2's operation should succeed");
     });
 
     it("should allow same record to be operated on at different timestamps", async () => {
@@ -100,22 +105,24 @@ contract("TransactionRegistry", (accounts) => {
       const timestamp1 = Math.floor(Date.now() / 1000);
       const timestamp2 = timestamp1 + 100; // 100 seconds later
 
-      const result1 = await registryInstance.validateTransaction(
+      const result1Tx = await registryInstance.validateTransaction(
         operation,
         recordId,
         timestamp1,
         { from: user1 }
       );
+      const result1Event = result1Tx.logs.find(log => log.event === 'ValidationResult');
 
-      const result2 = await registryInstance.validateTransaction(
+      const result2Tx = await registryInstance.validateTransaction(
         operation,
         recordId,
         timestamp2,
         { from: user1 }
       );
+      const result2Event = result2Tx.logs.find(log => log.event === 'ValidationResult');
 
-      assert.isTrue(result1, "First operation should succeed");
-      assert.isTrue(result2, "Second operation at different time should succeed");
+      assert.isTrue(result1Event.args.success, "First operation should succeed");
+      assert.isTrue(result2Event.args.success, "Second operation at different time should succeed");
     });
   });
 
@@ -190,31 +197,34 @@ contract("TransactionRegistry", (accounts) => {
       const baseTimestamp = Math.floor(Date.now() / 1000);
 
       // Create
-      const createResult = await registryInstance.validateTransaction(
+      const createTx = await registryInstance.validateTransaction(
         "Create",
         recordId,
         baseTimestamp,
         { from: user1 }
       );
-      assert.isTrue(createResult, "Create should succeed");
+      const createEvent = createTx.logs.find(log => log.event === 'ValidationResult');
+      assert.isTrue(createEvent.args.success, "Create should succeed");
 
       // Update
-      const updateResult = await registryInstance.validateTransaction(
+      const updateTx = await registryInstance.validateTransaction(
         "Update",
         recordId,
         baseTimestamp + 10,
         { from: user1 }
       );
-      assert.isTrue(updateResult, "Update should succeed");
+      const updateEvent = updateTx.logs.find(log => log.event === 'ValidationResult');
+      assert.isTrue(updateEvent.args.success, "Update should succeed");
 
       // Delete
-      const deleteResult = await registryInstance.validateTransaction(
+      const deleteTx = await registryInstance.validateTransaction(
         "Delete",
         recordId,
         baseTimestamp + 20,
         { from: user1 }
       );
-      assert.isTrue(deleteResult, "Delete should succeed");
+      const deleteEvent = deleteTx.logs.find(log => log.event === 'ValidationResult');
+      assert.isTrue(deleteEvent.args.success, "Delete should succeed");
 
       // Verify all three operations are recorded with correct signers
       const createSigner = await registryInstance.getSigner(

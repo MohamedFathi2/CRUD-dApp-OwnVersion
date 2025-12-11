@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.21;
 import "./interfaces/ITransactionRegistry.sol";
 
 /**
@@ -37,6 +37,7 @@ contract TransactionRegistry is ITransactionRegistry {
         // Check if this operation hash has already been recorded
         if (signatureRegistry[txnHash] != address(0)) {
             // Hash already exists - this is a duplicate
+            emit ValidationResult(false);
             return false;
         }
         
@@ -45,6 +46,7 @@ contract TransactionRegistry is ITransactionRegistry {
         
         // Emit event to log the successful transaction
         emit TransactionExecuted(msg.sender, txnHash, timestamp);
+        emit ValidationResult(true);
         
         // Return true to indicate success
         return true;

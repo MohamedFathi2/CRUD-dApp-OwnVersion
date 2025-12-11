@@ -1,0 +1,646 @@
+{
+  "contractName": "ITransactionRegistry",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "signer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "txnHash",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "TransactionExecuted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "success",
+          "type": "bool"
+        }
+      ],
+      "name": "ValidationResult",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "operation",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "recordId",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "validateTransaction",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "operation",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "recordId",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "getSigner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.21+commit.d9974bed\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"signer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"txnHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"TransactionExecuted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"success\",\"type\":\"bool\"}],\"name\":\"ValidationResult\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"operation\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"recordId\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"getSigner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"operation\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"recordId\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"validateTransaction\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"getSigner(string,string,uint256)\":{\"params\":{\"operation\":\"The operation type.\",\"recordId\":\"The unique identifier of the target record.\",\"timestamp\":\"The timestamp/nonce of the operation.\"},\"returns\":{\"_0\":\"address The address of the signer, or address(0) if the transaction does not exist.\"}},\"validateTransaction(string,string,uint256)\":{\"details\":\"Generates a hash from inputs and checks against signatureRegistry. If the hash exists, returns false (duplicate). If the hash is new, records msg.sender and emits TransactionExecuted.\",\"params\":{\"operation\":\"The operation type (e.g., \\\"Create\\\", \\\"Update\\\").\",\"recordId\":\"The unique identifier of the target record.\",\"timestamp\":\"The timestamp/nonce of the operation.\"},\"returns\":{\"_0\":\"bool True if the transaction is new and accepted; otherwise false.\"}}},\"title\":\"ITransactionRegistry\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"getSigner(string,string,uint256)\":{\"notice\":\"Retrieves the address responsible for a specific operation.\"},\"validateTransaction(string,string,uint256)\":{\"notice\":\"Validates that an operation signature is unique and locks it to the sender.\"}},\"notice\":\"Registry for validating operation uniqueness and maintaining an audit trail.\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/interfaces/ITransactionRegistry.sol\":\"ITransactionRegistry\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/interfaces/ITransactionRegistry.sol\":{\"keccak256\":\"0xfe407c22f15ed2754c01268bf2dec563ec47702f87a15bf3bf23eb6166410510\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://616ee0192bb9a06acad2c8afec8872c5c60c2ec8375f9edc969a51ca8c6ade27\",\"dweb:/ipfs/QmVqjEsbKyn4izwsbrYYmqnrxwN4xbcjhrxStYFCTZrek9\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.21;\r\n\r\n/**\r\n * @title ITransactionRegistry\r\n * @notice Registry for validating operation uniqueness and maintaining an audit trail.\r\n */\r\ninterface ITransactionRegistry {\r\n\r\n    /*\r\n     * @dev Emitted when a transaction is successfully validated.\r\n     * @param signer The address of the user who initiated the transaction. Indexed for filtering.\r\n     * @param txnHash The computed hash of the operation data.\r\n     * @param timestamp The timestamp associated with the operation.\r\n     */\r\n    event TransactionExecuted(\r\n        address indexed signer, \r\n        bytes32 txnHash, \r\n        uint256 timestamp\r\n    );\r\n    \r\n    // Event to track validation results\r\n    event ValidationResult(bool success);\r\n\r\n    /**\r\n     * @notice Validates that an operation signature is unique and locks it to the sender.\r\n     * @dev Generates a hash from inputs and checks against signatureRegistry.\r\n     * If the hash exists, returns false (duplicate).\r\n     * If the hash is new, records msg.sender and emits TransactionExecuted.\r\n     * @param operation The operation type (e.g., \"Create\", \"Update\").\r\n     * @param recordId The unique identifier of the target record.\r\n     * @param timestamp The timestamp/nonce of the operation.\r\n     * @return bool True if the transaction is new and accepted; otherwise false.\r\n     */\r\n    function validateTransaction(\r\n        string calldata operation, \r\n        string calldata recordId, \r\n        uint256 timestamp\r\n    ) external returns (bool);\r\n\r\n    /**\r\n     * @notice Retrieves the address responsible for a specific operation.\r\n     * @param operation The operation type.\r\n     * @param recordId The unique identifier of the target record.\r\n     * @param timestamp The timestamp/nonce of the operation.\r\n     * @return address The address of the signer, or address(0) if the transaction does not exist.\r\n     */\r\n    function getSigner(\r\n        string calldata operation, \r\n        string calldata recordId, \r\n        uint256 timestamp\r\n    ) external view returns (address);\r\n}",
+  "sourcePath": "C:\\Programming\\FutureProjects\\CRUD-dApp\\blockchain\\contracts\\interfaces\\ITransactionRegistry.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/interfaces/ITransactionRegistry.sol",
+    "exportedSymbols": {
+      "ITransactionRegistry": [
+        234
+      ]
+    },
+    "id": 235,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 196,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".21"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "33:24:2"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "ITransactionRegistry",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": {
+          "id": 197,
+          "nodeType": "StructuredDocumentation",
+          "src": "61:129:2",
+          "text": " @title ITransactionRegistry\n @notice Registry for validating operation uniqueness and maintaining an audit trail."
+        },
+        "fullyImplemented": false,
+        "id": 234,
+        "linearizedBaseContracts": [
+          234
+        ],
+        "name": "ITransactionRegistry",
+        "nameLocation": "202:20:2",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "anonymous": false,
+            "eventSelector": "43ffef756323155aadbc39fc2dac8743f056e76ceef56c59b6df3b48b89dc92a",
+            "id": 205,
+            "name": "TransactionExecuted",
+            "nameLocation": "556:19:2",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 204,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 199,
+                  "indexed": true,
+                  "mutability": "mutable",
+                  "name": "signer",
+                  "nameLocation": "602:6:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 205,
+                  "src": "586:22:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 198,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "586:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 201,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "txnHash",
+                  "nameLocation": "628:7:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 205,
+                  "src": "620:15:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 200,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "620:7:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 203,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "timestamp",
+                  "nameLocation": "655:9:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 205,
+                  "src": "647:17:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 202,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "647:7:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "575:96:2"
+            },
+            "src": "550:122:2"
+          },
+          {
+            "anonymous": false,
+            "eventSelector": "1061a70da2075559c5d544579a95a44118c44ecc11e8328d3873d38bcebc2876",
+            "id": 209,
+            "name": "ValidationResult",
+            "nameLocation": "732:16:2",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 208,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 207,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "success",
+                  "nameLocation": "754:7:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 209,
+                  "src": "749:12:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 206,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "749:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "748:14:2"
+            },
+            "src": "726:37:2"
+          },
+          {
+            "documentation": {
+              "id": 210,
+              "nodeType": "StructuredDocumentation",
+              "src": "771:603:2",
+              "text": " @notice Validates that an operation signature is unique and locks it to the sender.\n @dev Generates a hash from inputs and checks against signatureRegistry.\n If the hash exists, returns false (duplicate).\n If the hash is new, records msg.sender and emits TransactionExecuted.\n @param operation The operation type (e.g., \"Create\", \"Update\").\n @param recordId The unique identifier of the target record.\n @param timestamp The timestamp/nonce of the operation.\n @return bool True if the transaction is new and accepted; otherwise false."
+            },
+            "functionSelector": "20111206",
+            "id": 221,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "validateTransaction",
+            "nameLocation": "1389:19:2",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 217,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 212,
+                  "mutability": "mutable",
+                  "name": "operation",
+                  "nameLocation": "1435:9:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 221,
+                  "src": "1419:25:2",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_calldata_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 211,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1419:6:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 214,
+                  "mutability": "mutable",
+                  "name": "recordId",
+                  "nameLocation": "1472:8:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 221,
+                  "src": "1456:24:2",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_calldata_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 213,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1456:6:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 216,
+                  "mutability": "mutable",
+                  "name": "timestamp",
+                  "nameLocation": "1500:9:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 221,
+                  "src": "1492:17:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 215,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1492:7:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1408:108:2"
+            },
+            "returnParameters": {
+              "id": 220,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 219,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 221,
+                  "src": "1535:4:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 218,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1535:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1534:6:2"
+            },
+            "scope": 234,
+            "src": "1380:161:2",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "documentation": {
+              "id": 222,
+              "nodeType": "StructuredDocumentation",
+              "src": "1549:364:2",
+              "text": " @notice Retrieves the address responsible for a specific operation.\n @param operation The operation type.\n @param recordId The unique identifier of the target record.\n @param timestamp The timestamp/nonce of the operation.\n @return address The address of the signer, or address(0) if the transaction does not exist."
+            },
+            "functionSelector": "ad50b012",
+            "id": 233,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getSigner",
+            "nameLocation": "1928:9:2",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 229,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 224,
+                  "mutability": "mutable",
+                  "name": "operation",
+                  "nameLocation": "1964:9:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 233,
+                  "src": "1948:25:2",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_calldata_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 223,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1948:6:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 226,
+                  "mutability": "mutable",
+                  "name": "recordId",
+                  "nameLocation": "2001:8:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 233,
+                  "src": "1985:24:2",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_calldata_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 225,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1985:6:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 228,
+                  "mutability": "mutable",
+                  "name": "timestamp",
+                  "nameLocation": "2029:9:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 233,
+                  "src": "2021:17:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 227,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2021:7:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1937:108:2"
+            },
+            "returnParameters": {
+              "id": 232,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 231,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 233,
+                  "src": "2069:7:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 230,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2069:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2068:9:2"
+            },
+            "scope": 234,
+            "src": "1919:159:2",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 235,
+        "src": "192:1889:2",
+        "usedErrors": [],
+        "usedEvents": [
+          205,
+          209
+        ]
+      }
+    ],
+    "src": "33:2048:2"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.21+commit.d9974bed.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.16",
+  "updatedAt": "2025-12-11T01:33:26.442Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "getSigner(string,string,uint256)": {
+        "params": {
+          "operation": "The operation type.",
+          "recordId": "The unique identifier of the target record.",
+          "timestamp": "The timestamp/nonce of the operation."
+        },
+        "returns": {
+          "_0": "address The address of the signer, or address(0) if the transaction does not exist."
+        }
+      },
+      "validateTransaction(string,string,uint256)": {
+        "details": "Generates a hash from inputs and checks against signatureRegistry. If the hash exists, returns false (duplicate). If the hash is new, records msg.sender and emits TransactionExecuted.",
+        "params": {
+          "operation": "The operation type (e.g., \"Create\", \"Update\").",
+          "recordId": "The unique identifier of the target record.",
+          "timestamp": "The timestamp/nonce of the operation."
+        },
+        "returns": {
+          "_0": "bool True if the transaction is new and accepted; otherwise false."
+        }
+      }
+    },
+    "title": "ITransactionRegistry",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "getSigner(string,string,uint256)": {
+        "notice": "Retrieves the address responsible for a specific operation."
+      },
+      "validateTransaction(string,string,uint256)": {
+        "notice": "Validates that an operation signature is unique and locks it to the sender."
+      }
+    },
+    "notice": "Registry for validating operation uniqueness and maintaining an audit trail.",
+    "version": 1
+  }
+}
